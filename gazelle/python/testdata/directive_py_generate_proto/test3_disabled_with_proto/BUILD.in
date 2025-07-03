@@ -5,5 +5,5 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 proto_library(
     name = "foo_proto",
     srcs = ["foo.proto"],
-    visibility = ["//visibility:public"],
+    visibility = ["//:__subpackages__"],
 )
