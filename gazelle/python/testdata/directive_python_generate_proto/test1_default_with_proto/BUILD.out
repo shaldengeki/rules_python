@@ -1,7 +1,7 @@
 load("@protobuf//bazel:py_proto_library.bzl", "py_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
-# py_generate_proto is not set.
+# python_generate_proto is not set.
 # nevertheless, py_proto_library is generated.
 
 proto_library(

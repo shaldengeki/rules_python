@@ -94,7 +94,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	pythonProjectRoot := cfg.PythonProjectRoot()
 	visibility := cfg.Visibility()
 
-	if cfg.PyGenerateProto() {
+	if cfg.GenerateProto() {
 		generateProtoLibraries(args, pythonProjectRoot, visibility, &result)
 	}
 

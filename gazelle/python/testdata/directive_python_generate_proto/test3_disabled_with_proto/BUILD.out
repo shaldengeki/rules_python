@@ -1,6 +1,6 @@
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
-# gazelle:py_generate_proto true
+# gazelle:python_generate_proto false
 
 proto_library(
     name = "foo_proto",

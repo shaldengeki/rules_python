@@ -98,9 +98,9 @@ const (
 	// separate pyi_deps attribute or merge type-checking dependencies into deps.
 	// Defaults to false for backward compatibility.
 	GeneratePyiDeps = "python_generate_pyi_deps"
-	// PyGenerateProto represents the directive that controls whether to generate
-	// py_generate_proto targets.
-	PyGenerateProto = "py_generate_proto"
+	// GenerateProto represents the directive that controls whether to generate
+	// python_generate_proto targets.
+	GenerateProto = "python_generate_proto"
 )
 
 // GenerationModeType represents one of the generation modes for the Python
@@ -189,7 +189,7 @@ type Config struct {
 	labelNormalization                        LabelNormalizationType
 	experimentalAllowRelativeImports          bool
 	generatePyiDeps                           bool
-	pyGenerateProto                           bool
+	generateProto                             bool
 }
 
 type LabelNormalizationType int
@@ -227,7 +227,7 @@ func New(
 		labelNormalization:                        DefaultLabelNormalizationType,
 		experimentalAllowRelativeImports:          false,
 		generatePyiDeps:                           false,
-		pyGenerateProto:                           true,
+		generateProto:                             true,
 	}
 }
 
@@ -262,7 +262,7 @@ func (c *Config) NewChild() *Config {
 		labelNormalization:                        c.labelNormalization,
 		experimentalAllowRelativeImports:          c.experimentalAllowRelativeImports,
 		generatePyiDeps:                           c.generatePyiDeps,
-		pyGenerateProto:                           c.pyGenerateProto,
+		generateProto:                             c.generateProto,
 	}
 }
 
@@ -561,16 +561,14 @@ func (c *Config) GeneratePyiDeps() bool {
 	return c.generatePyiDeps
 }
 
-// SetPyGenerateProto sets whether pyi_deps attribute should be generated separately
-// or type-checking dependencies should be merged into the regular deps attribute.
-func (c *Config) SetPyGenerateProto(pyGenerateProto bool) {
-	c.pyGenerateProto = pyGenerateProto
+// SetGenerateProto sets whether py_proto_library should be generated for proto_library.
+func (c *Config) SetGenerateProto(generateProto bool) {
+	c.generateProto = generateProto
 }
 
-// PyGenerateProto returns whether pyi_deps attribute should be generated separately
-// or type-checking dependencies should be merged into the regular deps attribute.
-func (c *Config) PyGenerateProto() bool {
-	return c.pyGenerateProto
+// GenerateProto returns whether py_proto_library should be generated for proto_library.
+func (c *Config) GenerateProto() bool {
+	return c.generateProto
 }
 
 // FormatThirdPartyDependency returns a label to a third-party dependency performing all formating and normalization.
