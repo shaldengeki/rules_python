@@ -26,7 +26,6 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
-	"github.com/bazelbuild/bazel-gazelle/language/proto"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/emirpasic/gods/lists/singlylinkedlist"
@@ -560,16 +559,9 @@ func ensureNoCollision(file *rule.File, targetName, kind string) error {
 func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string, visibility []string, res *language.GenerateResult) {
 	// First, enumerate all the proto_library in this package.
 	var protoRuleNames []string
-	protoPackages := make(map[string]proto.Package)
-	protoFileInfo := make(map[string]proto.FileInfo)
 	for _, r := range args.OtherGen {
 		if r.Kind() != "proto_library" {
 			continue
-		}
-		pkg := r.PrivateAttr(proto.PackageKey).(proto.Package)
-		protoPackages[r.Name()] = pkg
-		for name, info := range pkg.Files {
-			protoFileInfo[name] = info
 		}
 		protoRuleNames = append(protoRuleNames, r.Name())
 	}
