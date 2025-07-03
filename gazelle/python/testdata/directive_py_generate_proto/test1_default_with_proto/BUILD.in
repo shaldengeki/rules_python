@@ -1,0 +1,10 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+# py_generate_proto is not set.
+# nevertheless, py_proto_library is generated.
+
+proto_library(
+    name = "foo_proto",
+    srcs = ["foo.proto"],
+    visibility = ["//visibility:public"],
+)

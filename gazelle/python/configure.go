@@ -70,6 +70,7 @@ func (py *Configurer) KnownDirectives() []string {
 		pythonconfig.LabelNormalization,
 		pythonconfig.GeneratePyiDeps,
 		pythonconfig.ExperimentalAllowRelativeImports,
+		pythonconfig.PyGenerateProto,
 	}
 }
 
@@ -237,6 +238,12 @@ func (py *Configurer) Configure(c *config.Config, rel string, f *rule.File) {
 				log.Fatal(err)
 			}
 			config.SetGeneratePyiDeps(v)
+		case pythonconfig.PyGenerateProto:
+			v, err := strconv.ParseBool(strings.TrimSpace(d.Value))
+			if err != nil {
+				log.Fatal(err)
+			}
+			config.SetPyGenerateProto(v)
 		}
 	}
 

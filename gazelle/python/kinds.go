@@ -19,9 +19,10 @@ import (
 )
 
 const (
-	pyBinaryKind  = "py_binary"
-	pyLibraryKind = "py_library"
-	pyTestKind    = "py_test"
+	pyBinaryKind       = "py_binary"
+	pyLibraryKind      = "py_library"
+	pyProtoLibraryKind = "py_proto_library"
+	pyTestKind         = "py_test"
 )
 
 // Kinds returns a map that maps rule names (kinds) and information on how to
@@ -32,7 +33,7 @@ func (*Python) Kinds() map[string]rule.KindInfo {
 
 var pyKinds = map[string]rule.KindInfo{
 	pyBinaryKind: {
-		MatchAny: false,
+		MatchAny:   false,
 		MatchAttrs: []string{"srcs"},
 		NonEmptyAttrs: map[string]bool{
 			"deps":    true,
@@ -45,7 +46,7 @@ var pyKinds = map[string]rule.KindInfo{
 			"srcs": true,
 		},
 		ResolveAttrs: map[string]bool{
-			"deps": true,
+			"deps":     true,
 			"pyi_deps": true,
 		},
 	},
@@ -62,9 +63,15 @@ var pyKinds = map[string]rule.KindInfo{
 			"srcs": true,
 		},
 		ResolveAttrs: map[string]bool{
-			"deps": true,
+			"deps":     true,
 			"pyi_deps": true,
 		},
+	},
+	pyProtoLibraryKind: {
+		NonEmptyAttrs: map[string]bool{
+			"deps": true,
+		},
+		ResolveAttrs: map[string]bool{"deps": true},
 	},
 	pyTestKind: {
 		MatchAny: false,
@@ -79,7 +86,7 @@ var pyKinds = map[string]rule.KindInfo{
 			"srcs": true,
 		},
 		ResolveAttrs: map[string]bool{
-			"deps": true,
+			"deps":     true,
 			"pyi_deps": true,
 		},
 	},
@@ -98,6 +105,7 @@ var pyLoads = []rule.LoadInfo{
 		Symbols: []string{
 			pyBinaryKind,
 			pyLibraryKind,
+			pyProtoLibraryKind,
 			pyTestKind,
 		},
 	},
