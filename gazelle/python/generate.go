@@ -26,6 +26,7 @@ import (
 	"github.com/bazelbuild/bazel-gazelle/config"
 	"github.com/bazelbuild/bazel-gazelle/label"
 	"github.com/bazelbuild/bazel-gazelle/language"
+	"github.com/bazelbuild/bazel-gazelle/language/proto"
 	"github.com/bazelbuild/bazel-gazelle/rule"
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/emirpasic/gods/lists/singlylinkedlist"
@@ -88,11 +89,19 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 		}
 	}
 
+	var result language.GenerateResult
+	result.Gen = make([]*rule.Rule, 0)
+
+	pythonProjectRoot := cfg.PythonProjectRoot()
+	visibility := cfg.Visibility()
+
+	if cfg.PyGenerateProto() {
+		generateProtoLibraries(args, pythonProjectRoot, visibility, &result)
+	}
+
 	actualPyBinaryKind := GetActualKindName(pyBinaryKind, args)
 	actualPyLibraryKind := GetActualKindName(pyLibraryKind, args)
 	actualPyTestKind := GetActualKindName(pyTestKind, args)
-
-	pythonProjectRoot := cfg.PythonProjectRoot()
 
 	packageName := filepath.Base(args.Dir)
 
@@ -221,10 +230,6 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	}
 
 	parser := newPython3Parser(args.Config.RepoRoot, args.Rel, cfg.IgnoresDependency)
-	visibility := cfg.Visibility()
-
-	var result language.GenerateResult
-	result.Gen = make([]*rule.Rule, 0)
 
 	collisionErrors := singlylinkedlist.New()
 
@@ -550,4 +555,40 @@ func ensureNoCollision(file *rule.File, targetName, kind string) error {
 		}
 	}
 	return nil
+}
+
+func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string, visibility []string, res *language.GenerateResult) {
+	// First, enumerate all the proto_library in this package.
+	var protoRuleNames []string
+	protoPackages := make(map[string]proto.Package)
+	protoFileInfo := make(map[string]proto.FileInfo)
+	for _, r := range args.OtherGen {
+		if r.Kind() != "proto_library" {
+			continue
+		}
+		pkg := r.PrivateAttr(proto.PackageKey).(proto.Package)
+		protoPackages[r.Name()] = pkg
+		for name, info := range pkg.Files {
+			protoFileInfo[name] = info
+		}
+		protoRuleNames = append(protoRuleNames, r.Name())
+	}
+	sort.Strings(protoRuleNames)
+
+	// Now generate a py_proto_library for each proto_library.
+	for _, protoRuleName := range protoRuleNames {
+		pyProtoLibraryName := protoRuleName + "_py_pb2"
+
+		rppl := rule.NewRule("py_proto_library", pyProtoLibraryName)
+		rppl.SetAttr("deps", []string{":" + protoRuleName})
+
+		emptySiblings := treeset.Set{}
+		pyProtoLibrary := newTargetBuilder(pyProtoLibraryKind, pyProtoLibraryName, pythonProjectRoot, args.Rel, &emptySiblings).
+			addVisibility(visibility).
+			addResolvedDependency(":" + protoRuleName).
+			generateImportsAttribute().build()
+
+		res.Gen = append(res.Gen, pyProtoLibrary)
+		res.Imports = append(res.Imports, pyProtoLibrary.PrivateAttr(config.GazelleImportsKey))
+	}
 }
