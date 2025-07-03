@@ -105,8 +105,13 @@ var pyLoads = []rule.LoadInfo{
 		Symbols: []string{
 			pyBinaryKind,
 			pyLibraryKind,
-			pyProtoLibraryKind,
 			pyTestKind,
+		},
+	},
+	{
+		Name: "@protobuf//bazel:py_proto_library.bzl",
+		Symbols: []string{
+			pyProtoLibraryKind,
 		},
 	},
 }
