@@ -571,9 +571,6 @@ func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string
 	for _, protoRuleName := range protoRuleNames {
 		pyProtoLibraryName := protoRuleName + "_py_pb2"
 
-		rppl := rule.NewRule("py_proto_library", pyProtoLibraryName)
-		rppl.SetAttr("deps", []string{":" + protoRuleName})
-
 		emptySiblings := treeset.Set{}
 		pyProtoLibrary := newTargetBuilder(pyProtoLibraryKind, pyProtoLibraryName, pythonProjectRoot, args.Rel, &emptySiblings).
 			addVisibility(visibility).
