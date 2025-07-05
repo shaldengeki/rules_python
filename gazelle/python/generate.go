@@ -567,6 +567,7 @@ func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string
 	}
 	sort.Strings(protoRuleNames)
 
+	// Next, enumerate all the pre-existing py_proto_library in this package, so we can delete unnecessary rules later.
 	pyProtoRules := map[string]bool{}
 	for _, r := range args.File.Rules {
 		if r.Kind() == "py_proto_library" {
