@@ -227,7 +227,7 @@ func New(
 		labelNormalization:                        DefaultLabelNormalizationType,
 		experimentalAllowRelativeImports:          false,
 		generatePyiDeps:                           false,
-		generateProto:                             true,
+		generateProto:                             false,
 	}
 }
 

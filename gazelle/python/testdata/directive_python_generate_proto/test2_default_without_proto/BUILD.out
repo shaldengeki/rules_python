@@ -1,2 +1,1 @@
-# python_generate_proto is not set.
-# Since no proto is present, no targets are generated.
+# python_generate_proto is not set, so py_proto_library is not generated.
