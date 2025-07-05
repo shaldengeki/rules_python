@@ -94,7 +94,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	pythonProjectRoot := cfg.PythonProjectRoot()
 	visibility := cfg.Visibility()
 
-	if cfg.GenerateProto() {
+	if cfg.GenerateProto() && args.File != nil {
 		generateProtoLibraries(args, pythonProjectRoot, visibility, &result)
 	}
 
@@ -567,6 +567,13 @@ func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string
 	}
 	sort.Strings(protoRuleNames)
 
+	pyProtoRules := map[string]bool{}
+	for _, r := range args.File.Rules {
+		if r.Kind() == "py_proto_library" {
+			pyProtoRules[r.Name()] = false
+		}
+	}
+
 	// Now generate a py_proto_library for each proto_library.
 	emptySiblings := treeset.Set{}
 	for _, protoRuleName := range protoRuleNames {
@@ -578,5 +585,18 @@ func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string
 
 		res.Gen = append(res.Gen, pyProtoLibrary)
 		res.Imports = append(res.Imports, pyProtoLibrary.PrivateAttr(config.GazelleImportsKey))
+		pyProtoRules[pyProtoLibrary.Name()] = true
+
 	}
+
+	// Finally, emit an empty rule for each pre-existing py_proto_library that we didn't already generate.
+	for ruleName, generated := range pyProtoRules {
+		if generated {
+			continue
+		}
+
+		emptyRule := newTargetBuilder(pyProtoLibraryKind, ruleName, pythonProjectRoot, args.Rel, &emptySiblings).build()
+		res.Empty = append(res.Empty, emptyRule)
+	}
+
 }
