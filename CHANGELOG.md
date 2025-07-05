@@ -60,6 +60,13 @@ END_UNRELEASED_TEMPLATE
 * (gazelle) Types for exposed members of `python.ParserOutput` are now all public.
 * (gazelle) Removed the requirement for `__init__.py`, `__main__.py`, or `__test__.py` files to be
   present in a directory to generate a `BUILD.bazel` file.
+* (toolchain) Updated the following toolchains to build 20250612 to patch CVE-2025-47273:
+    * 3.9.23
+    * 3.10.18
+    * 3.11.13
+    * 3.12.11
+    * 3.14.0b2
+* (toolchain) Python 3.13 now references 3.13.5
 
 {#v0-0-0-fixed}
 ### Fixed
@@ -69,6 +76,12 @@ END_UNRELEASED_TEMPLATE
 * (pypi) Wheels with BUILD.bazel (or other special Bazel files) no longer
   result in missing files at runtime
   ([#2782](https://github.com/bazel-contrib/rules_python/issues/2782)).
+* (runfiles) The pypi runfiles package now includes `py.typed` to indicate it
+  supports type checking
+  ([#2503](https://github.com/bazel-contrib/rules_python/issues/2503)).
+* (toolchains) `local_runtime_repo` now checks if the include directory exists
+  before attempting to watch it, fixing issues on macOS with system Python
+  ({gh-issue}`3043`).
 
 {#v0-0-0-added}
 ### Added
@@ -108,7 +121,8 @@ END_UNRELEASED_TEMPLATE
 * (py_wheel) py_wheel always creates zip64-capable wheel zips
 * (providers) (experimental) {obj}`PyInfo.venv_symlinks` replaces
   `PyInfo.site_packages_symlinks`
-* (deps) Updating setuptools to patch CVE-2025-47273.
+* (deps) Updated setuptools to 78.1.1 to patch CVE-2025-47273. This effectively makes
+  Python 3.9 the minimum supported version for using `pip_parse`.
 
 {#1-5-0-fixed}
 ### Fixed
