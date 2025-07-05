@@ -568,10 +568,9 @@ func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string
 	sort.Strings(protoRuleNames)
 
 	// Now generate a py_proto_library for each proto_library.
+	emptySiblings := treeset.Set{}
 	for _, protoRuleName := range protoRuleNames {
 		pyProtoLibraryName := protoRuleName + "_py_pb2"
-
-		emptySiblings := treeset.Set{}
 		pyProtoLibrary := newTargetBuilder(pyProtoLibraryKind, pyProtoLibraryName, pythonProjectRoot, args.Rel, &emptySiblings).
 			addVisibility(visibility).
 			addResolvedDependency(":" + protoRuleName).
