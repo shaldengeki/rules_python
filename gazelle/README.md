@@ -510,6 +510,8 @@ py_proto_library(
 )
 ```
 
+When `false`, Gazelle will ignore any `py_proto_library`, including previously-generated or hand-created rules.
+
 ### Annotations
 
 *Annotations* refer to comments found _within Python files_ that configure how
