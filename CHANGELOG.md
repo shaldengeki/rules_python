@@ -60,12 +60,12 @@ END_UNRELEASED_TEMPLATE
 * (gazelle) Types for exposed members of `python.ParserOutput` are now all public.
 * (gazelle) Removed the requirement for `__init__.py`, `__main__.py`, or `__test__.py` files to be
   present in a directory to generate a `BUILD.bazel` file.
-* (toolchain) Updated the following toolchains to build 20250612 to patch CVE-2025-47273:
+* (toolchain) Updated the following toolchains to build 20250702 to patch CVE-2025-47273:
     * 3.9.23
     * 3.10.18
     * 3.11.13
     * 3.12.11
-    * 3.14.0b2
+    * 3.14.0b3
 * (toolchain) Python 3.13 now references 3.13.5
 
 {#v0-0-0-fixed}
@@ -91,12 +91,29 @@ END_UNRELEASED_TEMPLATE
 * (gazelle) New directive `gazelle:python_generate_pyi_deps`; when `true`,
   dependencies added to satisfy type-only imports (`if TYPE_CHECKING`) and type
   stub packages are added to `pyi_deps` instead of `deps`.
+* (toolchain) Add toolchains for aarch64 windows for
+    * 3.11.13
+    * 3.12.11
+    * 3.13.5
+    * 3.14.0b3
 * (gazelle) New directive `gazelle:python_generate_proto`; when `true`,
   Gazelle generates `py_proto_library` rules for `proto_library`. `false` by default.
 
 {#v0-0-0-removed}
 ### Removed
 * Nothing removed.
+
+{#1-5-1}
+## [1.5.1] - 2025-07-06
+
+[1.5.1]: https://github.com/bazel-contrib/rules_python/releases/tag/1.5.1
+
+{#v1-5-1-fixed}
+### Fixed
+
+* (pypi) Namespace packages work by default (pkgutil shims are generated
+  by default again)
+  ([#3038](https://github.com/bazel-contrib/rules_python/issues/3038)).
 
 {#1-5-0}
 ## [1.5.0] - 2025-06-11
