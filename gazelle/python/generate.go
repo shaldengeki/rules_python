@@ -88,19 +88,11 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 		}
 	}
 
-	var result language.GenerateResult
-	result.Gen = make([]*rule.Rule, 0)
-
-	pythonProjectRoot := cfg.PythonProjectRoot()
-	visibility := cfg.Visibility()
-
-	if cfg.GenerateProto() {
-		generateProtoLibraries(args, pythonProjectRoot, visibility, &result)
-	}
-
 	actualPyBinaryKind := GetActualKindName(pyBinaryKind, args)
 	actualPyLibraryKind := GetActualKindName(pyLibraryKind, args)
 	actualPyTestKind := GetActualKindName(pyTestKind, args)
+
+	pythonProjectRoot := cfg.PythonProjectRoot()
 
 	packageName := filepath.Base(args.Dir)
 
@@ -229,6 +221,14 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	}
 
 	parser := newPython3Parser(args.Config.RepoRoot, args.Rel, cfg.IgnoresDependency)
+	visibility := cfg.Visibility()
+
+	var result language.GenerateResult
+	result.Gen = make([]*rule.Rule, 0)
+
+	if cfg.GenerateProto() {
+		generateProtoLibraries(args, pythonProjectRoot, visibility, &result)
+	}
 
 	collisionErrors := singlylinkedlist.New()
 

@@ -487,9 +487,18 @@ def py_test(name, main=None, **kwargs):
 ```
 
 #### Directive: `python_generate_proto`:
-When `# gazelle:python_generate_proto true`, Gazelle will generate one `py_proto_library` for each `proto_library`, generating Python clients for protobuf in each package. By default this is turned off. Gazelle will also generate a load for the `py_proto_library` - attempting to detect the configured name for the `@protobuf` / `@com_google_protobuf` repo in your `MODULE.bazel`, and otherwise falling back to `@com_google_protobuf` for compatibility with `WORKSPACE`.
 
-For example, in a package with `# gazelle:python_generate_proto true` and a `foo.proto`, if you have both the proto extension and the Python extension loaded into Gazelle, you'll get something like:
+When `# gazelle:python_generate_proto true`, Gazelle will generate one
+`py_proto_library` for each `proto_library`, generating Python clients for
+protobuf in each package. By default this is turned off. Gazelle will also
+generate a load for the `py_proto_library` - attempting to detect the
+configured name for the `@protobuf` / `@com_google_protobuf` repo in your
+`MODULE.bazel`, and otherwise falling back to `@com_google_protobuf` for
+compatibility with `WORKSPACE`.
+
+For example, in a package with `# gazelle:python_generate_proto true` and a
+`foo.proto`, if you have both the proto extension and the Python extension
+loaded into Gazelle, you'll get something like:
 
 ```starlark
 load("@protobuf//bazel:py_proto_library.bzl", "py_proto_library")
