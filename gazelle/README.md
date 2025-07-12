@@ -491,8 +491,8 @@ def py_test(name, main=None, **kwargs):
 When `# gazelle:python_generate_proto true`, Gazelle will generate one
 `py_proto_library` for each `proto_library`, generating Python clients for
 protobuf in each package. By default this is turned off. Gazelle will also
-generate a load for the `py_proto_library` - attempting to detect the
-configured name for the `@protobuf` / `@com_google_protobuf` repo in your
+generate a load statement for the `py_proto_library` - attempting to detect
+the configured name for the `@protobuf` / `@com_google_protobuf` repo in your
 `MODULE.bazel`, and otherwise falling back to `@com_google_protobuf` for
 compatibility with `WORKSPACE`.
 
