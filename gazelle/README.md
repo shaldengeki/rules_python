@@ -513,7 +513,7 @@ proto_library(
 )
 
 py_proto_library(
-    name = "foo_proto_py_pb2",
+    name = "foo_py_proto",
     visibility = ["//:__subpackages__"],
     deps = [":foo_proto"],
 )
