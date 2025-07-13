@@ -57,6 +57,21 @@ func (*Resolver) Name() string { return languageName }
 func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
 	cfgs := c.Exts[languageName].(pythonconfig.Configs)
 	cfg := cfgs[f.Pkg]
+
+	if isSrcLibrary(r) {
+		return importsSrcLibrary(cfg, r, f)
+	} else if isProtoLibrary(r) {
+		return importsProtoLibrary()
+	}
+
+	return []resolve.ImportSpec{}
+}
+
+func isSrcLibrary(r *rule.Rule) bool {
+	return r.Kind() == pyLibraryKind || r.Kind() == pyTestKind || r.Kind() == pyBinaryKind
+}
+
+func importsSrcLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
 	srcs := r.AttrStrings("srcs")
 	provides := make([]resolve.ImportSpec, 0, len(srcs)+1)
 	for _, src := range srcs {
@@ -77,6 +92,15 @@ func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []reso
 		return nil
 	}
 	return provides
+}
+
+func isProtoLibrary(r *rule.Rule) bool {
+	return r.Kind() == pyProtoLibraryKind
+}
+
+func importsProtoLibrary() []resolve.ImportSpec {
+	// TODO
+	return []resolve.ImportSpec{}
 }
 
 // importSpecFromSrc determines the ImportSpec based on the target that contains the src so that
@@ -210,9 +234,9 @@ func (py *Resolver) Resolve(
 					baseParts = pkgParts[:len(pkgParts)-(relativeDepth-1)]
 				}
 				// Build absolute module path
-				absParts := append([]string{}, baseParts...)       // base path
-				absParts = append(absParts, fromParts...)          // subpath from 'from'
-				absParts = append(absParts, imported)              // actual imported symbol
+				absParts := append([]string{}, baseParts...) // base path
+				absParts = append(absParts, fromParts...)    // subpath from 'from'
+				absParts = append(absParts, imported)        // actual imported symbol
 
 				moduleName = strings.Join(absParts, ".")
 			}
@@ -282,6 +306,9 @@ func (py *Resolver) Resolve(
 							// Check if the imported module is part of the standard library.
 							if isStdModule(Module{Name: moduleName}) {
 								continue MODULES_LOOP
+							} else if r.Kind() == pyProtoLibraryKind {
+								// For py_proto_library, fall back to guessing the label based on the proto_library rule name.
+								matches = py.resolveProtoFallback(cfg)
 							} else if cfg.ValidateImportStatements() {
 								err := fmt.Errorf(
 									"%[1]q, line %[2]d: %[3]q is an invalid dependency: possible solutions:\n"+
@@ -370,6 +397,11 @@ func (py *Resolver) Resolve(
 			r.SetAttr("deps", convertDependencySetToExpr(combinedDeps))
 		}
 	}
+}
+
+func (*Resolver) resolveProtoFallback(c *pythonconfig.Config) []resolve.FindResult {
+	// TODO
+	return []resolve.FindResult{}
 }
 
 // addResolvedDeps adds the pre-resolved dependencies from the rule's private attributes
