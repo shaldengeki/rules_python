@@ -58,8 +58,9 @@ func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []reso
 	cfgs := c.Exts[languageName].(pythonconfig.Configs)
 	cfg := cfgs[f.Pkg]
 
-	if isSrcLibrary(r) {
-		return importsSrcLibrary(cfg, r, f)
+	srcs := r.AttrStrings("srcs")
+	if srcs != nil {
+		return importsSrcLibrary(cfg, srcs, f)
 	} else if isProtoLibrary(r) {
 		return importsProtoLibrary()
 	}
@@ -67,12 +68,7 @@ func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []reso
 	return []resolve.ImportSpec{}
 }
 
-func isSrcLibrary(r *rule.Rule) bool {
-	return r.Kind() == pyLibraryKind || r.Kind() == pyTestKind || r.Kind() == pyBinaryKind
-}
-
-func importsSrcLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
-	srcs := r.AttrStrings("srcs")
+func importsSrcLibrary(cfg *pythonconfig.Config, srcs []string, f *rule.File) []resolve.ImportSpec {
 	provides := make([]resolve.ImportSpec, 0, len(srcs)+1)
 	for _, src := range srcs {
 		ext := filepath.Ext(src)
