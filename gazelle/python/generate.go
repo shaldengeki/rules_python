@@ -227,7 +227,7 @@ func (py *Python) GenerateRules(args language.GenerateArgs) language.GenerateRes
 	result.Gen = make([]*rule.Rule, 0)
 
 	if cfg.GenerateProto() {
-		generateProtoLibraries(args, pythonProjectRoot, visibility, &result)
+		generateProtoLibraries(args, cfg, pythonProjectRoot, visibility, &result)
 	}
 
 	collisionErrors := singlylinkedlist.New()
@@ -556,7 +556,7 @@ func ensureNoCollision(file *rule.File, targetName, kind string) error {
 	return nil
 }
 
-func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string, visibility []string, res *language.GenerateResult) {
+func generateProtoLibraries(args language.GenerateArgs, cfg *pythonconfig.Config, pythonProjectRoot string, visibility []string, res *language.GenerateResult) {
 	// First, enumerate all the proto_library in this package.
 	var protoRuleNames []string
 	for _, r := range args.OtherGen {
@@ -580,7 +580,7 @@ func generateProtoLibraries(args language.GenerateArgs, pythonProjectRoot string
 	emptySiblings := treeset.Set{}
 	// Generate a py_proto_library for each proto_library.
 	for _, protoRuleName := range protoRuleNames {
-		pyProtoLibraryName := strings.TrimSuffix(protoRuleName, "_proto") + "_py_pb2"
+		pyProtoLibraryName := cfg.RenderProtoName(protoRuleName)
 		pyProtoLibrary := newTargetBuilder(pyProtoLibraryKind, pyProtoLibraryName, pythonProjectRoot, args.Rel, &emptySiblings).
 			addVisibility(visibility).
 			addResolvedDependency(":" + protoRuleName).
