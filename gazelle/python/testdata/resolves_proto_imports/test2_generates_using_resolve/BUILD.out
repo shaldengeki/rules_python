@@ -1,0 +1,10 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+# gazelle:resolve py foo.foo_pb2 //bar:bar_py_pb2
+
+py_library(
+    name = "resolves_proto_imports",
+    srcs = ["baz.py"],
+    visibility = ["//:__subpackages__"],
+    deps = ["//bar:bar_py_pb2"],
+)

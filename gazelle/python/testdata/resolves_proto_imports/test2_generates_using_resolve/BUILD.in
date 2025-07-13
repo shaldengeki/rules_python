@@ -1,0 +1,1 @@
+# gazelle:resolve py foo.foo_pb2 //bar:bar_py_pb2
