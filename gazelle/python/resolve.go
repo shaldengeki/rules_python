@@ -65,7 +65,7 @@ func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []reso
 		return importsProtoLibrary()
 	}
 
-	return []resolve.ImportSpec{}
+	return nil
 }
 
 func importsSrcLibrary(cfg *pythonconfig.Config, srcs []string, f *rule.File) []resolve.ImportSpec {
@@ -96,7 +96,7 @@ func isProtoLibrary(r *rule.Rule) bool {
 
 func importsProtoLibrary() []resolve.ImportSpec {
 	// TODO
-	return []resolve.ImportSpec{}
+	return nil
 }
 
 // importSpecFromSrc determines the ImportSpec based on the target that contains the src so that
