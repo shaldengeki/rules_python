@@ -62,7 +62,7 @@ func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []reso
 	if srcs != nil {
 		return importsSrcLibrary(cfg, srcs, f)
 	} else if isProtoLibrary(r) {
-		return importsProtoLibrary()
+		return importsProtoLibrary(r)
 	}
 
 	return nil
@@ -88,15 +88,6 @@ func importsSrcLibrary(cfg *pythonconfig.Config, srcs []string, f *rule.File) []
 		return nil
 	}
 	return provides
-}
-
-func isProtoLibrary(r *rule.Rule) bool {
-	return r.Kind() == pyProtoLibraryKind
-}
-
-func importsProtoLibrary() []resolve.ImportSpec {
-	// TODO
-	return nil
 }
 
 // importSpecFromSrc determines the ImportSpec based on the target that contains the src so that
@@ -132,6 +123,44 @@ func importSpecFromSrc(pythonProjectRoot, bzlPkg, src string) resolve.ImportSpec
 		Lang: languageName,
 		Imp:  imp,
 	}
+}
+
+func isProtoLibrary(r *rule.Rule) bool {
+	return r.Kind() == pyProtoLibraryKind
+}
+
+func importsProtoLibrary(r *rule.Rule) []resolve.ImportSpec {
+	specs := []resolve.ImportSpec{}
+
+	// TODO: determine root import path from either proto-option or proto-pkg
+	// rootPath := "foo.foo_pb2"
+
+	// TODO: use parsed proto FileInfo to enumerate importable constants, like messages,
+	// and emit ImportSpec for them
+	// protoPkg := r.PrivateAttr(proto.PackageKey).(proto.Package)
+	// for _, protoFileInfo := range protoPkg.Files {
+	// 	for _, svc := range protoFileInfo.Services {
+	// 		specs = append(specs, resolve.ImportSpec{
+	// 			Lang: languageName,
+	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, svc),
+	// 		})
+	// 	}
+	// 	for _, msg := range protoFileInfo.Messages {
+	// 		specs = append(specs, resolve.ImportSpec{
+	// 			Lang: languageName,
+	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, msg),
+	// 		})
+	// 	}
+	// 	for _, enum := range protoFileInfo.Enums {
+	// 		specs = append(specs, resolve.ImportSpec{
+	// 			Lang: languageName,
+	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, enum),
+	// 		})
+	// 	}
+	// }
+	// protoFileInfo := make(map[string]proto.FileInfo)
+
+	return specs
 }
 
 // Embeds returns a list of labels of rules that the given rule embeds. If

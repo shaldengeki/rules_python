@@ -1,3 +1,3 @@
-from foo.foo_pb2 import Bar
+import foo.foo_pb2
 
-x = Bar()
+x = Foo()
