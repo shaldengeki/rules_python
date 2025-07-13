@@ -1,0 +1,10 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+# gazelle:python_proto_naming_convention some_$proto_name$_value
+
+py_library(
+    name = "resolves_proto_imports",
+    srcs = ["baz.py"],
+    visibility = ["//:__subpackages__"],
+    deps = ["//bar:some_bar_value"],
+)
