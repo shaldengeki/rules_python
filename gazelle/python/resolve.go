@@ -141,13 +141,10 @@ func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) [
 	}
 
 	protoRule := protoRuleAttr.(string)
-	moduleName := strings.TrimSuffix(protoRule, "_proto") + "_pb2.py"
+	generatedPbFileName := strings.TrimSuffix(protoRule, "_proto") + "_pb2.py"
 	protoRel := protoRelAttr.(string)
 
-	specs = append(specs, importSpecFromSrc(cfg.PythonProjectRoot(), protoRel, moduleName))
-	// panic(fmt.Sprintf("protoRule %v | protoRel %v | moduleName %v | specs %v", protoRule, protoRel, moduleName, specs))
-
-	// rootPath := "foo.foo_pb2"
+	specs = append(specs, importSpecFromSrc(cfg.PythonProjectRoot(), protoRel, generatedPbFileName))
 
 	// TODO: use parsed proto FileInfo to enumerate importable constants, like messages,
 	// and emit ImportSpec for them
@@ -159,20 +156,7 @@ func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) [
 	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, svc),
 	// 		})
 	// 	}
-	// 	for _, msg := range protoFileInfo.Messages {
-	// 		specs = append(specs, resolve.ImportSpec{
-	// 			Lang: languageName,
-	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, msg),
-	// 		})
-	// 	}
-	// 	for _, enum := range protoFileInfo.Enums {
-	// 		specs = append(specs, resolve.ImportSpec{
-	// 			Lang: languageName,
-	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, enum),
-	// 		})
-	// 	}
-	// }
-	// protoFileInfo := make(map[string]proto.FileInfo)
+	// Repeat for Messages, Enums
 
 	return specs
 }
