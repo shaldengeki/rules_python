@@ -62,7 +62,7 @@ func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []reso
 	if srcs != nil {
 		return importsSrcLibrary(cfg, srcs, f)
 	} else if isProtoLibrary(r) {
-		return importsProtoLibrary(r)
+		return importsProtoLibrary(cfg, r, f)
 	}
 
 	return nil
@@ -129,10 +129,24 @@ func isProtoLibrary(r *rule.Rule) bool {
 	return r.Kind() == pyProtoLibraryKind
 }
 
-func importsProtoLibrary(r *rule.Rule) []resolve.ImportSpec {
+func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
 	specs := []resolve.ImportSpec{}
 
-	// TODO: determine root import path from either proto-option or proto-pkg
+	// First, determine the root module and emit an import for that,
+	// i.e. for //foo:foo_py_pb2, we'd get foo.foo_pb2
+	protoRuleAttr := r.PrivateAttr(protoKey)
+	protoRelAttr := r.PrivateAttr(protoRelKey)
+	if protoRuleAttr == nil || protoRelAttr == nil {
+		return specs
+	}
+
+	protoRule := protoRuleAttr.(string)
+	moduleName := strings.TrimSuffix(protoRule, "_proto") + "_pb2.py"
+	protoRel := protoRelAttr.(string)
+
+	specs = append(specs, importSpecFromSrc(cfg.PythonProjectRoot(), protoRel, moduleName))
+	// panic(fmt.Sprintf("protoRule %v | protoRel %v | moduleName %v | specs %v", protoRule, protoRel, moduleName, specs))
+
 	// rootPath := "foo.foo_pb2"
 
 	// TODO: use parsed proto FileInfo to enumerate importable constants, like messages,

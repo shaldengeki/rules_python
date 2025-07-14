@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package bar;
+package test2_generates_using_resolve.bar;
 
 message Bar {
     bool bar = 1;

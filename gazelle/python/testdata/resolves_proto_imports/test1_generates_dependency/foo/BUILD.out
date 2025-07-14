@@ -4,13 +4,13 @@ load("@com_google_protobuf//bazel:py_proto_library.bzl", "py_proto_library")
 # gazelle:python_generate_proto true
 
 proto_library(
-    name = "foo_proto",
+    name = "test1_generates_dependency_foo_proto",
     srcs = ["foo.proto"],
     visibility = ["//visibility:public"],
 )
 
 py_proto_library(
-    name = "foo_py_pb2",
+    name = "test1_generates_dependency_foo_py_pb2",
     visibility = ["//:__subpackages__"],
-    deps = [":foo_proto"],
+    deps = [":test1_generates_dependency_foo_proto"],
 )

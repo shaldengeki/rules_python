@@ -1,8 +1,8 @@
 load("@rules_python//python:defs.bzl", "py_library")
 
 py_library(
-    name = "resolves_proto_imports",
+    name = "test1_generates_dependency",
     srcs = ["bar.py"],
     visibility = ["//:__subpackages__"],
-    deps = ["//foo:foo_py_pb2"],
+    deps = ["//test1_generates_dependency/foo:test1_generates_dependency_foo_py_pb2"],
 )
