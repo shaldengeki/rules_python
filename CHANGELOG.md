@@ -87,6 +87,7 @@ END_UNRELEASED_TEMPLATE
   ({gh-issue}`3043`).
 * (pypi) The pipstar `defaults` configuration now supports any custom platform
   name.
+* Multi-line python imports (e.g. with escaped newlines) are now correctly processed by Gazelle.
 
 {#v0-0-0-added}
 ### Added
