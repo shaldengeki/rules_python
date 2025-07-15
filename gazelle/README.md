@@ -266,7 +266,7 @@ py_libary(
 
 #### Directive: `python_proto_naming_convention`:
 
-Set this directive to a string pattern to control how the generated `py_proto_library` targets are named. Gazelle will replace `$proto_name$` in the pattern with the name of the `proto_library` rule, stripping out a trailing `_proto`. For example:
+Set this directive to a string pattern to control how the generated `py_proto_library` targets are named. When generating new `py_proto_library` rules, Gazelle will replace `$proto_name$` in the pattern with the name of the `proto_library` rule, stripping out a trailing `_proto`. For example:
 
 ```starlark
 # gazelle:python_generate_proto true
@@ -286,7 +286,7 @@ py_proto_library(
 )
 ```
 
-The default naming convention is `$proto_name$_pb2_py`, so by default in the above example Gazelle would generate `foo_pb2_py`.
+The default naming convention is `$proto_name$_pb2_py`, so by default in the above example Gazelle would generate `foo_pb2_py`. Any pre-existing rules are left in place and not renamed.
 
 Note that the Python library will always be imported as `foo_pb2` in Python code, regardless of the naming convention. Also note that Gazelle is currently not able to map said imports, e.g. `import foo_pb2`, to fill in `py_proto_library` targets as dependencies of other rules. See [this issue](https://github.com/bazel-contrib/rules_python/issues/1703).
 
