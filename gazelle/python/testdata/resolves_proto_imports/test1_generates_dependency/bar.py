@@ -1,3 +1,3 @@
-import test1_generates_dependency.foo.test1_generates_dependency_foo_pb2
+import test1_generates_dependency.foo.foo_pb2
 
-x = test1_generates_dependency_foo_pb2.Foo()
+x = foo_pb2.Foo()

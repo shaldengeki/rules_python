@@ -1,3 +1,3 @@
-import test3_uses_naming_convention.bar.test3_uses_naming_convention_bar_pb2
+import test3_uses_naming_convention.bar.bar_pb2
 
-x = test3_uses_naming_convention_bar_pb2.Bar()
+x = bar_pb2.Bar()

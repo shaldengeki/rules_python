@@ -134,17 +134,17 @@ func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule) []resolve.Impor
 
 	// Determine the root module and emit an import for that,
 	// i.e. for //foo:foo_py_pb2, we'd get foo.foo_pb2
-	protoRuleAttr := r.PrivateAttr(protoKey)
 	protoRelAttr := r.PrivateAttr(protoRelKey)
-	if protoRuleAttr == nil || protoRelAttr == nil {
+	protoSrcsAttr := r.PrivateAttr(protoSrcsKey)
+	if protoRelAttr == nil || protoSrcsAttr == nil {
 		return nil
 	}
 
-	protoRule := protoRuleAttr.(string)
-	generatedPbFileName := strings.TrimSuffix(protoRule, "_proto") + "_pb2.py"
 	protoRel := protoRelAttr.(string)
-
-	specs = append(specs, importSpecFromSrc(cfg.PythonProjectRoot(), protoRel, generatedPbFileName))
+	for _, protoSrc := range protoSrcsAttr.([]string) {
+		generatedPbFileName := strings.TrimSuffix(protoSrc, ".proto") + "_pb2.py"
+		specs = append(specs, importSpecFromSrc(cfg.PythonProjectRoot(), protoRel, generatedPbFileName))
+	}
 
 	return specs
 }
