@@ -62,7 +62,7 @@ func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []reso
 	if srcs != nil {
 		return importsSrcLibrary(cfg, srcs, f)
 	} else if isProtoLibrary(r) {
-		return importsProtoLibrary(cfg, r, f)
+		return importsProtoLibrary(cfg, r)
 	}
 
 	return nil
@@ -129,7 +129,7 @@ func isProtoLibrary(r *rule.Rule) bool {
 	return r.Kind() == pyProtoLibraryKind
 }
 
-func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
+func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule) []resolve.ImportSpec {
 	specs := []resolve.ImportSpec{}
 
 	// Determine the root module and emit an import for that,
