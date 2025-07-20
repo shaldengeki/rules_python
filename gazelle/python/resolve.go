@@ -132,7 +132,7 @@ func isProtoLibrary(r *rule.Rule) bool {
 func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
 	specs := []resolve.ImportSpec{}
 
-	// First, determine the root module and emit an import for that,
+	// Determine the root module and emit an import for that,
 	// i.e. for //foo:foo_py_pb2, we'd get foo.foo_pb2
 	protoRuleAttr := r.PrivateAttr(protoKey)
 	protoRelAttr := r.PrivateAttr(protoRelKey)
@@ -145,18 +145,6 @@ func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) [
 	protoRel := protoRelAttr.(string)
 
 	specs = append(specs, importSpecFromSrc(cfg.PythonProjectRoot(), protoRel, generatedPbFileName))
-
-	// TODO: use parsed proto FileInfo to enumerate importable constants, like messages,
-	// and emit ImportSpec for them
-	// protoPkg := r.PrivateAttr(proto.PackageKey).(proto.Package)
-	// for _, protoFileInfo := range protoPkg.Files {
-	// 	for _, svc := range protoFileInfo.Services {
-	// 		specs = append(specs, resolve.ImportSpec{
-	// 			Lang: languageName,
-	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, svc),
-	// 		})
-	// 	}
-	// Repeat for Messages, Enums
 
 	return specs
 }
