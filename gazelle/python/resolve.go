@@ -57,7 +57,18 @@ func (*Resolver) Name() string { return languageName }
 func (py *Resolver) Imports(c *config.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
 	cfgs := c.Exts[languageName].(pythonconfig.Configs)
 	cfg := cfgs[f.Pkg]
+
 	srcs := r.AttrStrings("srcs")
+	if srcs != nil {
+		return importsSrcLibrary(cfg, srcs, f)
+	} else if isProtoLibrary(r) {
+		return importsProtoLibrary(cfg, r, f)
+	}
+
+	return nil
+}
+
+func importsSrcLibrary(cfg *pythonconfig.Config, srcs []string, f *rule.File) []resolve.ImportSpec {
 	provides := make([]resolve.ImportSpec, 0, len(srcs)+1)
 	for _, src := range srcs {
 		ext := filepath.Ext(src)
@@ -112,6 +123,42 @@ func importSpecFromSrc(pythonProjectRoot, bzlPkg, src string) resolve.ImportSpec
 		Lang: languageName,
 		Imp:  imp,
 	}
+}
+
+func isProtoLibrary(r *rule.Rule) bool {
+	return r.Kind() == pyProtoLibraryKind
+}
+
+func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule, f *rule.File) []resolve.ImportSpec {
+	specs := []resolve.ImportSpec{}
+
+	// First, determine the root module and emit an import for that,
+	// i.e. for //foo:foo_py_pb2, we'd get foo.foo_pb2
+	protoRuleAttr := r.PrivateAttr(protoKey)
+	protoRelAttr := r.PrivateAttr(protoRelKey)
+	if protoRuleAttr == nil || protoRelAttr == nil {
+		return specs
+	}
+
+	protoRule := protoRuleAttr.(string)
+	generatedPbFileName := strings.TrimSuffix(protoRule, "_proto") + "_pb2.py"
+	protoRel := protoRelAttr.(string)
+
+	specs = append(specs, importSpecFromSrc(cfg.PythonProjectRoot(), protoRel, generatedPbFileName))
+
+	// TODO: use parsed proto FileInfo to enumerate importable constants, like messages,
+	// and emit ImportSpec for them
+	// protoPkg := r.PrivateAttr(proto.PackageKey).(proto.Package)
+	// for _, protoFileInfo := range protoPkg.Files {
+	// 	for _, svc := range protoFileInfo.Services {
+	// 		specs = append(specs, resolve.ImportSpec{
+	// 			Lang: languageName,
+	// 			Imp:  fmt.Sprintf("%s.%s", rootPath, svc),
+	// 		})
+	// 	}
+	// Repeat for Messages, Enums
+
+	return specs
 }
 
 // Embeds returns a list of labels of rules that the given rule embeds. If
@@ -210,9 +257,9 @@ func (py *Resolver) Resolve(
 					baseParts = pkgParts[:len(pkgParts)-(relativeDepth-1)]
 				}
 				// Build absolute module path
-				absParts := append([]string{}, baseParts...)       // base path
-				absParts = append(absParts, fromParts...)          // subpath from 'from'
-				absParts = append(absParts, imported)              // actual imported symbol
+				absParts := append([]string{}, baseParts...) // base path
+				absParts = append(absParts, fromParts...)    // subpath from 'from'
+				absParts = append(absParts, imported)        // actual imported symbol
 
 				moduleName = strings.Join(absParts, ".")
 			}
@@ -282,6 +329,9 @@ func (py *Resolver) Resolve(
 							// Check if the imported module is part of the standard library.
 							if isStdModule(Module{Name: moduleName}) {
 								continue MODULES_LOOP
+							} else if r.Kind() == pyProtoLibraryKind {
+								// For py_proto_library, fall back to guessing the label based on the proto_library rule name.
+								matches = py.resolveProtoFallback(cfg)
 							} else if cfg.ValidateImportStatements() {
 								err := fmt.Errorf(
 									"%[1]q, line %[2]d: %[3]q is an invalid dependency: possible solutions:\n"+
@@ -370,6 +420,11 @@ func (py *Resolver) Resolve(
 			r.SetAttr("deps", convertDependencySetToExpr(combinedDeps))
 		}
 	}
+}
+
+func (*Resolver) resolveProtoFallback(c *pythonconfig.Config) []resolve.FindResult {
+	// TODO
+	return []resolve.FindResult{}
 }
 
 // addResolvedDeps adds the pre-resolved dependencies from the rule's private attributes
