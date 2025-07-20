@@ -574,7 +574,6 @@ func ensureNoCollision(file *rule.File, targetName, kind string) error {
 func generateProtoLibraries(args language.GenerateArgs, cfg *pythonconfig.Config, pythonProjectRoot string, visibility []string, res *language.GenerateResult) {
 	// First, enumerate all the proto_library in this package.
 	var protoRuleNames []string
-	protoRules := map[string]*rule.Rule{}
 	protoRel := map[string]string{}
 
 	for _, r := range args.OtherGen {
@@ -582,7 +581,6 @@ func generateProtoLibraries(args language.GenerateArgs, cfg *pythonconfig.Config
 			continue
 		}
 		protoRuleNames = append(protoRuleNames, r.Name())
-		protoRules[r.Name()] = r
 		protoRel[r.Name()] = args.Rel
 	}
 	sort.Strings(protoRuleNames)

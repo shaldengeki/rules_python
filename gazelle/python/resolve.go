@@ -137,7 +137,7 @@ func importsProtoLibrary(cfg *pythonconfig.Config, r *rule.Rule) []resolve.Impor
 	protoRuleAttr := r.PrivateAttr(protoKey)
 	protoRelAttr := r.PrivateAttr(protoRelKey)
 	if protoRuleAttr == nil || protoRelAttr == nil {
-		return specs
+		return nil
 	}
 
 	protoRule := protoRuleAttr.(string)
