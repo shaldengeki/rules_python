@@ -317,9 +317,6 @@ func (py *Resolver) Resolve(
 							// Check if the imported module is part of the standard library.
 							if isStdModule(Module{Name: moduleName}) {
 								continue MODULES_LOOP
-							} else if r.Kind() == pyProtoLibraryKind {
-								// For py_proto_library, fall back to guessing the label based on the proto_library rule name.
-								matches = py.resolveProtoFallback(cfg)
 							} else if cfg.ValidateImportStatements() {
 								err := fmt.Errorf(
 									"%[1]q, line %[2]d: %[3]q is an invalid dependency: possible solutions:\n"+
@@ -408,11 +405,6 @@ func (py *Resolver) Resolve(
 			r.SetAttr("deps", convertDependencySetToExpr(combinedDeps))
 		}
 	}
-}
-
-func (*Resolver) resolveProtoFallback(c *pythonconfig.Config) []resolve.FindResult {
-	// TODO
-	return []resolve.FindResult{}
 }
 
 // addResolvedDeps adds the pre-resolved dependencies from the rule's private attributes
