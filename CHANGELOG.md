@@ -93,6 +93,8 @@ END_UNRELEASED_TEMPLATE
   ([#3099](https://github.com/bazel-contrib/rules_python/issues/3099)).
 * (pypi) Expose pypi packages only common to all Python versions in `all_requirements`
   ([#2921](https://github.com/bazel-contrib/rules_python/issues/2921)).
+* (repl) Normalize the path for the `REPL` stub to make it possible to use the
+  default stub template from outside `rules_python` ({gh-issue}`3101`).
 
 {#v0-0-0-added}
 ### Added
